@@ -27,6 +27,11 @@ function prepend(element, list) {
   return newList;
 }
 
+// Obviously all pointers are added from front so can just create new head of list, duh
+function prependBook(value, list) {
+  return {value, rest: list};
+}
+
 // Non Recursive version
 function nthOld(list, index) {
   let counter = 0;
@@ -38,6 +43,7 @@ function nthOld(list, index) {
 
 // Recursive version
 function nth(list, index) {
+  if (!list) return undefined;
   if (index == 0) return list.value;
   else return nth(list.rest, index - 1);
 }
