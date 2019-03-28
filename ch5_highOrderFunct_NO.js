@@ -1,3 +1,5 @@
+// Example function from summarizing with reduce section
+// Added extra printing for clarity of operation
 function characterCount(script) {
   return script.ranges.reduce((count, [from, to]) => {
     // console.log(`${count}, ${script.name}`);
