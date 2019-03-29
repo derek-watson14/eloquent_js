@@ -1,4 +1,61 @@
-// A List
+// 1. The sum of a range:
+// Initial solution:
+function range(start, end, step = start < end ? 1 : -1) {
+    let rangeAry = [];
+    if (step > 0) {
+        for (let i = start; i <= end; i += step) rangeAry.push(i);
+    } else {
+        for (let i = start; i >= end; i += step) rangeAry.push(i);
+    }
+    return rangeAry;
+}
+function sum(rangeAry) {
+    let sum = 0;
+    for (let number of rangeAry) {
+        sum += number;
+    }
+    return sum;
+}
+console.log(range(1, 10));
+// → [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+console.log(range(5, 2));
+// → [5, 4, 3, 2]
+console.log(sum(range(1, 10)));
+// → 55
+
+// 2. Reversing an array:
+// Reverse array initial solution:
+function reverseArrayOld(array) {
+    newArray = [];
+    for (let element of array) newArray.unshift(element);
+    return newArray;
+}
+// using reverse iteration as in hints
+function reverseArray(array) {
+    let newArray = []
+    for (let i = array.length - 1; i >= 0; i--) newArray.push(array[i])
+    return newArray;
+}
+
+// Reverse array in place only completed with hints (but no cheating):
+function reverseArrayInPlace(array) {
+    let half = Math.floor(array.length / 2);
+    for (i = 0; i < half; i++) {
+        templow = array[i];
+        array[i] = array[array.length - 1 - i];
+        array[array.length - 1 - i] = templow
+    }
+}
+
+console.log(reverseArray(["A", "B", "C"]));
+// → ["C", "B", "A"];
+let arrayValue = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+reverseArrayInPlace(arrayValue);
+console.log(arrayValue);
+// → [5, 4, 3, 2, 1]
+
+
+// 3. A List
 function arrayToList(array) {
   let list = null;
   for (let i = array.length - 1; i >= 0; i--) {
@@ -57,7 +114,7 @@ console.log(prepend(10, prepend(20, null)));
 console.log(nth(arrayToList([10, 20, 30]), 1));
 // → 20
 
-// Deep Comparison
+// 4. Deep Comparison
 // Initial solution:
 function deepEqual(valA, valB) {
   if (valA === valB) return true;
