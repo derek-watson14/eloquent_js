@@ -1,9 +1,7 @@
 // 1. Flattening:
 
 let arrays = [[1, 2, 3], [4, 5], [6]];
-console.log(arrays.reduce((aX, aY) => {
-  return aX.concat(aY);
-}));
+console.log(arrays.reduce((aX, aY) => aX.concat(aY)));
 // → [1, 2, 3, 4, 5, 6]
 
 // 2. Your Own Loop:
@@ -19,6 +17,7 @@ loop(3, n => n > 0, n => n - 1, console.log);
 // → 1
 
 // 3. Everything
+// Initial solution:
 function everyLoop(array, test) {
   for (let element of array) {
     if (!test(element)) return false;
@@ -42,18 +41,29 @@ console.log(every([], n => n < 10));
 // → true
 
 
-// 4. Dominant writing direction
+// 4. Dominant writing direction:
+// Initial solution:
 function dominantDirection(text) {
-  let scripts = countBy(text, char => {
+    let scripts = countBy(text, char => {
     let script = characterScript(char.codePointAt(0));
     return script ? script.name : "none";
   }).filter(({name}) => name != "none");
-  
   let dom = scripts.reduce((a, b) => a.count < b.count ? b : a);
-  let dir = SCRIPTS.filter(s => s.name === dom);
-  
-  return dir;
+  return SCRIPTS.filter(s => s.name == dom.name)[0].direction;
 }
+// Book solution:
+function dominantDirection4(text) {
+    let counted = countBy(text, char => {
+    let script = characterScript(char.codePointAt(0));
+    // Make name category immeditately equal to direction, thus removing second search of scripts
+    return script ? script.direction : "none";
+  }).filter(({name}) => name != "none");
+  // Extra error testing:
+  if (counted.length == 0) return "ltr";
+  // .name property is now a direction
+  return counted.reduce((a, b) => a.count > b.count ? a : b).name;
+}
+
 
 console.log(dominantDirection("Hello!"));
 // → ltr
