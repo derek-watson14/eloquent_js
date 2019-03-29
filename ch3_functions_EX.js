@@ -1,4 +1,4 @@
-// Minimum:
+// 1. Minimum:
 let min = function(a, b) {
   if (a > b) return b;
   else return a;
@@ -8,7 +8,7 @@ console.log(min(0, 10));
 console.log(min(0, -10));
 // → -10
 
-// Recursion:
+// 2. Recursion:
 function isEven(n) {
   if (n == 0) return true;
   else if (n == 1) return false;
@@ -22,7 +22,7 @@ console.log(isEven(75));
 console.log(isEven(-1));
 // → ?? (Without "> 0" check, stack overflow)
 
-// Bean Counting:
+// 3. Bean Counting:
 function countBsOld(str) {
   let count = 0;
   for (let i = 0; i < str.length; i++) {
