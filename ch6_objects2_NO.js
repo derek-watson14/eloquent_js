@@ -93,6 +93,45 @@ console.log(Object.getPrototypeOf(Rabbit) == Function.prototype);
 console.log(Object.getPrototypeOf(weirdRabbit) == Rabbit.prototype);
 // → true
 
+// Modern ES6 class notation:
+class RabbitES6 {
+  constructor(type) {
+    this.type = type;
+  }
+  speak(line) {
+    console.log(`The ${this.type} rabbit says '${line}'`);
+  }
+}
+let killaRabbit = new RabbitES6("killa");
+let blackRabbit = new RabbitES6("black");
+// Allows us to define a constructor and a set of methods in one place
+// Constructor is a special name, like __init__ in python, and is needed to construct the instance
 
+// Classes can also be used in an 'expression' rather than a statement
+// They must not be named, no binding is produced just gives constructed contents as a value
+let expression = new class {constructor(namen) {this.namen = namen;}; getWord() { return "hello"; } };
+expression.namen = "DJW";
+console.log(expression.getWord(), expression.namen);
+// → hello
 
+// If an object and its prototype have the same properties (by name), the object "overrides" its prototype
+Rabbit.prototype.teeth = "small";
+console.log(killerRabbit.teeth);
+// → small
+killerRabbit.teeth = "long, sharp, and bloody";
+console.log(killerRabbit.teeth);
+// → long, sharp, and bloody
+console.log(blackRabbit.teeth);
+// → small
+console.log(Rabbit.prototype.teeth);
+// → small
+
+// Overriding is useful to differentiate objects with exceptional features from their standard prototypes
+// Here the Array object overrides toString() in the grandaddy prototype Object object
+console.log(Array.prototype.toString == Object.prototype.toString);
+// → false
+console.log([1, 2].toString());
+// → 1,2 <- like .join(", ")
+console.log(Object.prototype.toString.call([1, 2]));
+// → [object Array] <- Object + name of type
 
