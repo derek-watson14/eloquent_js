@@ -52,7 +52,7 @@ class InitialGroup {
     }
 }
 // After looking at book solution:
-class Group {
+class GroupNI {
     constructor() {
         this.group = [];
     }
@@ -69,14 +69,14 @@ class Group {
         return this.group.includes(value);
     }
     static from(array) {
-        let group = new Group;
+        let group = new GroupNI;
         for (let item of array) {
             group.add(item);
         }
         return group;
     }
 }
-let group = Group.from([10, 20]);
+let group = GroupNI.from([10, 20]);
 console.log(group.has(10));
 // → true
 console.log(group.has(30));
@@ -85,3 +85,62 @@ group.add(10);
 group.delete(10);
 console.log(group.has(10));
 // → false
+
+// 3. Iterable Groups:
+class Group {
+    constructor() {
+        this.group = [];
+    }
+    add(value) {
+        if (!this.has(value)) this.group.push(value);
+    }
+    delete(value) {
+        let index = this.group.indexOf(value);
+        if (index != -1) this.group.splice(index, 1);
+    }
+    has(value) {
+        if (this.group.indexOf(value) != -1) return true;
+        else return false;
+    }
+    static from(array) {
+        let group = new Group;
+        for (let item of array) {
+            group.add(item);
+        }
+        return group;
+    }
+    [Symbol.iterator]() {
+        return new GroupIterator(this.group);
+    }
+}
+class GroupIterator {
+  constructor(group) {
+	this.track = 0;
+    this.group = group;
+  }
+  next() {
+    if (this.track >= this.group.length) return {done: true}
+    let value = this.group[this.track];
+    this.track++;
+    return {value, done: false};
+  }
+}
+
+for (let value of Group.from(["a", "b", "c"])) {
+  console.log(value);
+}
+// → a
+// → b
+// → c
+
+// 4. Borrowing a method:
+let map = {one: true, two: true, hasOwnProperty: true};
+
+// Fix this call
+// console.log(map.hasOwnProperty("one"));
+// Fixed
+console.log(hasOwnProperty.call(map, "one"));
+// → true
+
+// If you want to use an "ancestor's" property that is covered by a child object, on the child
+// A solution is to call it explicitly, and pass the object in as a parameter
