@@ -6,7 +6,7 @@ const roads = [
     "Grete's House-Shop",          "Marketplace-Farm",
     "Marketplace-Post Office",     "Marketplace-Shop",
     "Marketplace-Town Hall",       "Shop-Town Hall"
-  ];
+];
   
 function buildGraph(edges) {
     let graph = Object.create(null);
@@ -25,45 +25,45 @@ function buildGraph(edges) {
         }
       }
     return graph;
-  }
-  const roadGraph = buildGraph(roads);
+}
+const roadGraph = buildGraph(roads);
   
-  class VillageState {
-    constructor(place, parcels) {
-      this.place = place;
-      this.parcels = parcels;
+class VillageState {
+  constructor(place, parcels) {
+    this.place = place;
+    this.parcels = parcels;
+  }
+  move(destination) {
+    // Check if there is a road going from current place to destination
+    // If not, retrun current state
+    if (!roadGraph[this.place].includes(destination)) {
+      return this;
+    } 
+    // Else create new state w/ destination as place, and updated parcel list
+    // Map "moves" the parcels: for each parcel, if the parcel is not at the current place,
+    // it doesn't change it, if it it at the current place, it updates its place to the new destination(maintaining its address)
+    // In this set up all parcels in entire village are tracked, not just ones robot is currently carrying
+    // Filter then delivers the packages, by removing parcels from the list that now have a place equal to their address
+    else { 
+      let parcels = this.parcels.map(parcel => {
+        if (parcel.place != this.place) return parcel;
+        return {place: destination, address: parcel.address};
+      }).filter(parcel => parcel.place != parcel.address);
+      return new VillageState(destination, parcels);
     }
-    move(destination) {
-      // Check if there is a road going from current place to destination
-      // If not, retrun current state
-      if (!roadGraph[this.place].includes(destination)) {
-        return this;
-      } 
-      // Else create new state w/ destination as place, and updated parcel list
-      // Map "moves" the parcels: for each parcel, if the parcel is not at the current place,
-      // it doesn't change it, if it it at the current place, it updates its place to the new destination(maintaining its address)
-      // In this set up all parcels in entire village are tracked, not just ones robot is currently carrying
-      // Filter then delivers the packages, by removing parcels from the list that now have a place equal to their address
-      else { 
-        let parcels = this.parcels.map(parcel => {
-          if (parcel.place != this.place) return parcel;
-          return {place: destination, address: parcel.address};
-        }).filter(parcel => parcel.place != parcel.address);
-        return new VillageState(destination, parcels);
+  }
+  static random(parcelCount = 5) {
+      let parcels = [];
+      for (let i = 0; i < parcelCount; i++) {
+        let address = randomPick(Object.keys(roadGraph));
+        let place;
+        do {
+          place = randomPick(Object.keys(roadGraph));
+        } while (place == address);
+        parcels.push({place, address});
       }
-    }
-    static random(parcelCount = 5) {
-        let parcels = [];
-        for (let i = 0; i < parcelCount; i++) {
-          let address = randomPick(Object.keys(roadGraph));
-          let place;
-          do {
-            place = randomPick(Object.keys(roadGraph));
-          } while (place == address);
-          parcels.push({place, address});
-        }
-        return new VillageState("Post Office", parcels);
-      };
+      return new VillageState("Post Office", parcels);
+    };
 }
 // The parcel list isn't changed when moved but an entirely new list is created
 let first = new VillageState(
