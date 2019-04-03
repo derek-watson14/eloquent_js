@@ -239,6 +239,9 @@ class Matrix {
   set(x, y, value) {
     this.content[y * this.width + x] = value;
   }
+  [Symbol.iterator]() {
+    return new MatrixIterator(this);
+  }
 }
 class MatrixIterator {
   constructor(matrix) {
@@ -259,9 +262,6 @@ class MatrixIterator {
     return {value, done: false};
   }
 }
-Matrix.prototype[Symbol.iterator] = function() {
-  return new MatrixIterator(this);
-};
 let matrix = new Matrix(5, 2, (x, y) => `location ${x},${y}`);
 for (let {value} of matrix) {
   console.log(value);
