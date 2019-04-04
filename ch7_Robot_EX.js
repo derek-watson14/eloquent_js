@@ -208,6 +208,7 @@ function germanRobot2({place, parcels}, route) {
     }
     return {direction: route[0], memory: route.slice(1)};
 }
+
 function compareSpeed2(possRoute, bestRoute) { 
   if (bestRoute.route == null) return possRoute;
   else if (possRoute.route.length < bestRoute.route.length) return possRoute;
@@ -217,7 +218,6 @@ function compareSpeed2(possRoute, bestRoute) {
   }
   else return bestRoute;
 }
-
 
 function runRobotStats(robot, memory) {
     let tests = 500, fastest = 200, slowest = 0, total = 0;
@@ -239,7 +239,42 @@ function runRobotStats(robot, memory) {
     console.log(`Fastest: ${fastest}, Slowest: ${slowest}, Average: ${average}`);
 }
 
-
 //compareRobots(germanRobot, [], germanRobot2, [], goalOrientedRobot, [], routeRobot, []);
 
 runRobotStats(germanRobot2, []);
+
+// 3. Persistent Group
+// Create a list that is persistent, ie. previous versions are not lost when it is altered
+// The difficulty here way the empty property,
+// it could not be putin the cunstructor becuase then it could only be accessed when an instance was created
+// Adding it after the class definition, with the syntax of adding a newproperty, solved that problem
+// Now it can be called when no instance exsists, and returns an "empty" instance to the caller
+// First problem I was unable to solve on my own, mostly because of syntax
+class PGroup {
+  constructor(members) {
+      this.members = members;
+  }
+  add(value) {
+      if (this.has(value)) return this;
+      return new PGroup(this.members.concat([value]));
+  }
+  delete(value) {
+      if (!this.has(value)) return this;
+      return new PGroup(this.members.filter(m => m !== value));
+  }
+  has(value) {
+      return this.members.includes(value);
+  }
+}
+PGroup.empty = new PGroup([]);
+
+let a = PGroup.empty.add("a");
+let ab = a.add("b");
+let b = ab.delete("a");
+
+console.log(b.has("b"));
+// → true
+console.log(a.has("b"));
+// → false
+console.log(b.has("a"));
+// → false
