@@ -163,6 +163,7 @@ console.log(animalCount.test("15 pigchickens"));
 // → false
 
 // Mechanisms of matching
+
 // Starting left to right, either the first match will be found or none at all
 // When a match attempt braches, as with a +, * or | symbol, the position before testing the brach is saved
 // Thus the program can return to its save point to try another branch if necessary
@@ -306,8 +307,8 @@ console.log(global3.exec("xyz abc"));
 let sticky3 = /abc/y;
 console.log(sticky3.exec("xyz abc"));
 // → null
-sticky.lastIndex = 4;
-console.log(sticky.exec("xyz abc"));
+sticky3.lastIndex = 4;
+console.log(sticky3.exec("xyz abc"));
 // → ["abc"]
 
 // If you use a regular expression for multiple exec calls, the auto update lastIndex can cause problems:
@@ -325,3 +326,115 @@ console.log("Banana".match(/an/g));
 // So be cautious with global regular expressions. 
 // The cases where they are necessary (calls to replace and places where you want to explicitly use lastIndex)
 // are typically the only places where you want to use them.
+
+// Looping over matches:
+
+// This finds and prints all numbers in the string
+let input11 = "A string with 3 numbers in it... 42 and 88.";
+let number11 = /\b\d+\b/g;
+let match11;
+// Bascially will run while number.exec(input) doesnt return null, which it does when no matches remain
+while (match11 = number11.exec(input11)) {
+  console.log("Found", match11[0], "at", match11.index);
+}
+// → Found 3 at 14
+//   Found 42 at 33
+//   Found 88 at 40
+
+
+// Parsing an INI file: 
+
+function parseINI(string) {
+  // Start with an object to hold the top-level fields
+  let result = {};
+  let section = result;
+  // Both of above point at same object
+  string.split(/\r?\n/).forEach(line => {
+    let match;
+    if (match = line.match(/^(\w+)=(.*)$/)) {
+      // When a x=y line, create a new binding x in common object and assign y as its value
+      // Result and section are still pointed at the general object
+      section[match[1]] = match[2];
+    } else if (match = line.match(/^\[(.*)\]$/)) {
+      // If the line is a [z] subheading, make result.z = an empty object, point section at that object
+      // Result is still pointed at the greater object, so new subobjects can be greated if new subheaders are found
+      // Section will always be pointed in the current subheader, so gerneral properties must be at the top
+      // But after making a subheader object, all x=y lines will be written to that sub, until a new one is found
+      section = result[match[1]] = {};
+    } else if (!/^\s*(;.*)?$/.test(line)) {
+      throw new Error("Line '" + line + "' is not valid.");
+    }
+  });
+  return result;
+}
+console.log(parseINI(`
+name=Vasilis
+[address]
+city=Tessaloniki
+state=WA`));
+// → {name: "Vasilis", address: {city: "Tessaloniki"}}
+
+// International characters
+// For some reason \w only includes 26 english characters, 0-9 and the _, outside of that all chars will match \W
+// however \s the whitespace detection character is modern unicode standard
+
+console.log(/🍎{3}/.test("🍎🍎🍎"));
+// → false
+console.log(/<.>/.test("<🌹>"));
+// → false
+console.log(/<.>/u.test("<🌹>"));
+// → true
+
+// Regular expressions work on code units not on characters, so multi unit characters will behave strangely
+// The u option must be added to the regular expression (like g for global) to make it test for unicode
+// Not widely supported yet but possible to use \p to test for unicode properties in regular expressions
+console.log(/\p{Script=Greek}/u.test("α"));
+// → true
+console.log(/\p{Script=Arabic}/u.test("α"));
+// → false
+console.log(/\p{Alphabetic}/u.test("α"));
+// → true
+console.log(/\p{Alphabetic}/u.test("!"));
+// → false
+// Both \p{Property=Value} and \p{PropertyName} work, though if using the latter only certain properties are accepted
+
+// Regular expressions are objects that represent patterns in strings:
+
+// /abc/	A sequence of characters
+// /[abc]/	Any character from a set of characters
+// /[^abc]/	Any character not in a set of characters
+// /[0-9]/	Any character in a range of characters
+// /x+/	One or more occurrences of the pattern x
+// /x+?/	One or more occurrences, nongreedy
+// /x*/	Zero or more occurrences
+// /x?/	Zero or one occurrence
+// /x{2,4}/	Two to four occurrences
+// /(abc)/	A group
+// /a|b|c/	Any one of several patterns
+// /\d/	Any digit character
+// /\w/	An alphanumeric character (“word character”)
+// /\s/	Any whitespace character
+// /./	Any character except newlines
+// /\b/	A word boundary
+// /^/	Start of input
+// /$/	End of input
+
+// RegExp have test and exec, test returns boolean, exec returns array of matches.
+// The array will have an index property to indicate its start point
+
+// String have match, search and replace to work with regular expressions:
+console.log("abcdabc".match(/bc/));
+// -> [ 'bc', index: 1, input: 'abcd', groups: undefined ] (info about first match)
+console.log("abcdabc".search(/bc/));
+// -> 1 (starting position of match)
+console.log("abcdabc".replace(/bc/, "BC"));
+// -> aBCdabc (replaces first match with specified replacement)
+
+// RegExps also have options, written after the closing slash
+// /x/i makes match case *insensitve*
+// /x/g makes expression *global*, making replace work on all instances
+// /x/y *sticky* means it will not search ahead and skip part of the string when looking for a match
+// /x/u turns on unicode mode, makes expressions handle code units better
+
+// Regular expressions are a sharp tool with an awkward handle.
+// Part of knowing how to use them is resisting the urge to try to shoehorn things that they cannot cleanly express into them.
