@@ -400,6 +400,7 @@ console.log(/\p{Alphabetic}/u.test("!"));
 
 // Regular expressions are objects that represent patterns in strings:
 
+// Test will return true if it contains: 
 // /abc/	A sequence of characters
 // /[abc]/	Any character from a set of characters
 // /[^abc]/	Any character not in a set of characters
@@ -414,6 +415,9 @@ console.log(/\p{Alphabetic}/u.test("!"));
 // /\d/	Any digit character
 // /\w/	An alphanumeric character (“word character”)
 // /\s/	Any whitespace character
+// \D	A character that is not a digit
+// \W	A nonalphanumeric character
+// \S	A nonwhitespace character
 // /./	Any character except newlines
 // /\b/	A word boundary
 // /^/	Start of input
